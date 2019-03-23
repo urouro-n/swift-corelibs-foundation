@@ -291,7 +291,11 @@ class TestProcess : XCTestCase {
         do {
             let (pwd, _) = try runTask([xdgTestHelperURL().path, "--getcwd"], currentDirectoryPath: tmpDir)
             // Check the sub-process used the correct directory
-            XCTAssertEqual(pwd.trimmingCharacters(in: .newlines), tmpDir)
+            #if os(macOS)
+                XCTAssertEqual(pwd.trimmingCharacters(in: .newlines), "/private" + tmpDir)
+            #else
+                XCTAssertEqual(pwd.trimmingCharacters(in: .newlines), tmpDir)
+            #endif
         } catch {
             XCTFail("Test failed: \(error)")
         }
